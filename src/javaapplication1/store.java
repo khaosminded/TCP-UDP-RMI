@@ -29,7 +29,7 @@ public class store {
     }
     
     public Iterator<String> list(){
-        ArrayList<String> list=null;
+        ArrayList<String> list=new ArrayList();
         Iterator<String> that=map.keySet().iterator();
         while(that.hasNext())
         {

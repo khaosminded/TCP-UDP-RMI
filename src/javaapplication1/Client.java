@@ -9,7 +9,10 @@ import java.net.*;
 
 public class Client {
     
-    private static void UDP(String host,int hostPort, String command){}
+    private static void UDP(String host,int hostPort, String command){
+    
+    
+    }
     
     
     private static void TCP(String host,int hostPort,String command){
@@ -18,8 +21,8 @@ public class Client {
                 BufferedReader in = new BufferedReader(
                     new InputStreamReader(socket.getInputStream()));
             ){
-                System.out.println("TCP Client is running\n"
-                        + "--host=:"+host+" port=:"+hostPort);
+//                System.out.println("TCP Client is running\n"
+//                        + "--host=:"+host+" port=:"+hostPort);
                 
                 out.println(command);
                 String fromServer=in.readLine();

@@ -14,6 +14,7 @@ import java.util.*;
 
 public class Server {
     private static store st=new store();
+    private static boolean then_exit=false;
     
     private static String put(String key,String val){
         st.put(key, val);
@@ -21,6 +22,7 @@ public class Server {
     }
     private static String get(String key){
         String val=st.get(key);
+        if(key==null)return "invalid_key";
         return "get key="+key+" get val="+val;
     }
     private static String del(String key){
@@ -31,11 +33,12 @@ public class Server {
         Iterator<String> it=st.list();
         String list="";
         while(it.hasNext()){
-            list+=it.next()+"\n";
+            list+=it.next();
         }
         return list;
     }
     private static String exit(){
+        then_exit=true;
         return "<the server then exits>";
     }
 
@@ -56,8 +59,12 @@ public class Server {
                 break;
             case '4':
                 response=store();
+                break;
             case '5':
                 response=exit();
+                break;
+            default:
+                util.usage_info();
         }
         
         return response;
@@ -66,7 +73,7 @@ public class Server {
     
     private static void TCP(int portNumber){
         System.out.println("TCP server on, listening on port: "+portNumber);
-        while(true){    
+        while(!then_exit){    
             try( 
                 ServerSocket serverSocket = new ServerSocket(portNumber);
                 Socket clientSocket = serverSocket.accept();
