@@ -14,7 +14,7 @@ import java.util.*;
 
 public class Server {
     private static store st=new store();
-    private static boolean then_exit=false;
+    static boolean then_exit=false;
     
     private static String put(String key,String val){
         st.put(key, val);
@@ -42,7 +42,9 @@ public class Server {
         return "<the server then exits>";
     }
 
-    private static String protocol(String inLine){
+    public static String protocol(String inLine){
+        if(!inLine.equals(""))
+                    System.out.println("fromclient:"+inLine);
         String [] index;
         index=inLine.substring(1).split("\\$");
         String response="";
@@ -84,8 +86,7 @@ public class Server {
             ){
                 String inLine,outLine;
                 inLine=in.readLine();
-                if(!inLine.equals(""))
-                    System.out.println("fromclient:"+inLine);
+                
                 outLine=protocol(inLine);
                 out.println(outLine);
             } 
@@ -101,7 +102,9 @@ public class Server {
     
     private static void UDP(int portNumber){
         System.out.println("UDP server on, listening on port: "+portNumber);
+        new UDPServerThread("UDPThread1",portNumber).start();
         //TODO
+    
              
     }
     

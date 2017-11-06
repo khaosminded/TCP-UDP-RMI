@@ -5,6 +5,8 @@
  */
 package javaapplication1;
 
+import java.net.DatagramPacket;
+
 /**
  *
  * @author hanxinlei
@@ -12,7 +14,22 @@ package javaapplication1;
 public class util {
     public static void usage_info()
     {
-        String info="usage_info TODO";
+        String info="Client:\n" +
+            "uc/tc <address> <port> put <key> <msg>  UDP/TCP CLIENT: Put an object into store\n" +
+            "uc/tc <address> <port> get <key>  UDP/TCP CLIENT: Get an object from store by key\n" +
+            "uc/tc <address> <port> del <key>  UDP/TCP CLIENT: Delete an object from store by key\n" +
+            "uc/tc <address> <port> store  UDP/TCP CLIENT: Display object store\n" +
+            "uc/tc <address> <port> exit  UDP/TCP CLIENT: Shutdown server\n" +
+            "rmic <address> put <key> <msg>  RMI CLIENT: Put an object into store\n" +
+            "rmic <address> get <key>  RMI CLIENT: Get an object from store by key\n" +
+            "rmic <address> del <key>  RMI CLIENT: Delete an object from store by key\n" +
+            "rmic <address> store  RMI CLIENT: Display object store\n" +
+            "rmic <address> exit  RMI CLIENT: Shutdown server\n" +
+            "Server:\n" +
+            "us/ts <port>  UDP/TCP/TCP-and-UDP SERVER: run server on <port>.\n" +
+            "tus <tcpport> <udpport>  TCP-and-UDP SERVER: run servers on <tcpport> and <udpport> sharing same key-value store.\n" +
+            "alls <tcpport> <udpport>  TCP, UDP, and RMI SERVER: run servers on <tcpport> and <udpport> sharing same key-value store.\n" +
+            "rmic  RMI Server.";
         System.out.print(info);
     }
     public static void main(String[] args) {
@@ -21,6 +38,11 @@ public class util {
         String substring[] = a.substring(1).split("\\$");
         System.out.println(substring[0]);
         //System.out.println(substring[1]);
+        
+        byte [] buf=new byte[128];
+        buf[0]='a';
+        String t=new String(buf);
+        System.out.println(t.replaceAll("\0", ""));
         
     }
 }

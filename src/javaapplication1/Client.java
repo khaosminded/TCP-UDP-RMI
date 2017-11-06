@@ -10,8 +10,27 @@ import java.net.*;
 public class Client {
     
     private static void UDP(String host,int hostPort, String command){
-    
-    
+        try{
+            
+            //send 
+            DatagramSocket socket = new DatagramSocket();
+            byte[] buf = command.getBytes();//constuct datapacket
+            DatagramPacket packet = new DatagramPacket(buf, buf.length,
+                    InetAddress.getByName(host),hostPort);
+            socket.send(packet);
+            //receive
+            buf = new byte[256];
+            packet = new DatagramPacket(buf, buf.length);
+            socket.receive(packet);
+            
+            System.out.println("server response:"+new String(packet.getData()).replaceAll("\0",""));
+
+        }catch (UnknownHostException e){
+            e.printStackTrace();
+        } 
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     
