@@ -15,20 +15,21 @@ public class store {
     public store(){
         map=new HashMap();
     }
-    
-    public void put(String key,String val){
+    //I think we only need write synchronization
+    //but whatever, performance is not critical here
+    public synchronized void  put(String key,String val){
         map.put(key, val); 
     }
     
-    public String get(String key){
+    public synchronized String get(String key){
         return map.get(key);
     }
     
-    public void del(String key){
+    public synchronized void del(String key){
         map.remove(key);
     }
     
-    public Iterator<String> list(){
+    public synchronized Iterator<String> list(){
         ArrayList<String> list=new ArrayList();
         Iterator<String> that=map.keySet().iterator();
         while(that.hasNext())
