@@ -22,7 +22,7 @@ public class Server {
     }
     private static String get(String key){
         String val=st.get(key);
-        if(key==null)return "invalid_key";
+        if(key==null)return "invalid_key"; 
         return "get key="+key+" get val="+val;
     }
     private static String del(String key){
@@ -72,40 +72,44 @@ public class Server {
         return response;
     }
     
+    private static void RMI(){/*TODO*/};
     
     private static void TCP(int portNumber){
-        System.out.println("TCP server on, listening on port: "+portNumber);
-        while(!then_exit){    
-            try( 
-                ServerSocket serverSocket = new ServerSocket(portNumber);
-                Socket clientSocket = serverSocket.accept();
-                PrintWriter out =
-                    new PrintWriter(clientSocket.getOutputStream(), true);
-                BufferedReader in = new BufferedReader(
-                    new InputStreamReader(clientSocket.getInputStream()));
-            ){
-                String inLine,outLine;
-                inLine=in.readLine();
-                
-                outLine=protocol(inLine);
-                out.println(outLine);
-            } 
-            catch (IOException e) {
-                System.out.println("Exception caught when trying to listen on port "
-                    + portNumber + " or listening for a connection");
-                System.out.println(e.getMessage());
-                break;
+        System.out.println("TCP server on, trying to listen port: "+portNumber);
+        try (ServerSocket serverSocket = new ServerSocket(portNumber)) { 
+            Integer threadId=0;
+            while (!then_exit) {
+                //each client connection(socket) create a thread
+                threadId++;
+                new TCPServerThread("TCPThread"+threadId.toString(),
+                        serverSocket.accept()).start();
             }
-      
+        } catch (IOException e) {
+            System.err.println("Could not listen on port " + portNumber);
         }
     }
     
     private static void UDP(int portNumber){
-        System.out.println("UDP server on, listening on port: "+portNumber);
-        new UDPServerThread("UDPThread1",portNumber).start();
-        //TODO
-    
-             
+        System.out.println("UDP server on, trying to listen port: "+portNumber);
+        try{
+        //****UDP SERVERS LISTEN ON PORT A, SHOULD SEND ON PORT A+1***//
+        //Why?Im not sure.
+            Integer threadId=0;
+            DatagramSocket socket_r = new DatagramSocket(portNumber);
+            DatagramSocket socket_s = new DatagramSocket(portNumber+1);
+            while(!then_exit)
+            {//each packet a thread. Seems create thread too frequently...
+                threadId++;
+                byte[] buf = new byte[256];
+                DatagramPacket packet = new DatagramPacket(buf, buf.length);
+                socket_r.receive(packet);
+                new UDPServerThread("UDPThread"+threadId.toString(),
+                        socket_s,packet).start();
+            }
+        }catch(IOException e){
+            System.out.println("Exception caught when trying to listen on port "
+                        + portNumber);
+        }
     }
     
     public static void main(String[] args) {

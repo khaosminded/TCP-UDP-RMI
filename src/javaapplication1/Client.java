@@ -6,9 +6,10 @@
 package javaapplication1;
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 public class Client {
-    
+    private static void RMI(){};
     private static void UDP(String host,int hostPort, String command){
         try{
             
@@ -42,7 +43,6 @@ public class Client {
             ){
 //                System.out.println("TCP Client is running\n"
 //                        + "--host=:"+host+" port=:"+hostPort);
-                
                 out.println(command);
                 String fromServer=in.readLine();
                 System.out.println("server response: "+fromServer);
@@ -55,45 +55,51 @@ public class Client {
                 e.printStackTrace();
             }
     }
-
+    private static String protocol(String[] args)
+    {   /*construct command
+        * $ java ­jar GenericNode.jar tc localhost 1234 put a 123
+        * args=[[tc|uc],[localhost],[portnum],[put|get|del|store|exit],[!key],[!value]]
+        */
+        String command="";
+        try{
+            switch(args[3]){
+                case "put":command+="1";
+                            command+=args[4]+"$"+args[5];
+                            break;
+                case "get":command+="2";
+                            command+=args[4];
+                            break;
+                case "del":command+="3";
+                            command+=args[4];
+                            break;
+                case "store":command+="4";break;
+                case "exit":command+="5";break;
+                default: util.usage_info();
+            }
+            
+        }catch(Exception e){util.usage_info();return null;}
+        return command;
+    }
     public static void main(String[] args) {
         
         //new Socket
         String host=args[1];
         int hostPort = Integer.parseInt(args[2]);
-        /*construct command
-        * $ java ­jar GenericNode.jar tc localhost 1234 put a 123
-        * args=[[tc|uc],[localhost],[portnum],[put|get|del|store|exit],[!key],[!value]]
-        */
-        String command="";
-        switch(args[3]){
-            case "put":command+="1";
-                        command+=args[4]+"$"+args[5];
-                        break;
-            case "get":command+="2";
-                        command+=args[4];
-                        break;
-            case "del":command+="3";
-                        command+=args[4];
-                        break;
-            case "store":command+="4";break;
-            case "exit":command+="5";break;
-            default: util.usage_info();
-        }
-        
-        
-        
-        
-        
-        //transit by diff protocal
-        if(args[0].equals("tc"))
-            TCP(host,hostPort,command);
-        else if(args[0].equals("uc"))
-            UDP(host,hostPort,command);
-        else
-            util.usage_info();
-        return;
+ 
+        String command=new String(protocol(args));
 
+        //transit by diff protocal
+        if(command!=null)
+        {
+            if(args[0].equals("tc"))
+                TCP(host,hostPort,command);
+            else if(args[0].equals("uc"))
+                UDP(host,hostPort,command);
+            else if(args[0].equals("rmic"))
+                RMI();
+            else
+                util.usage_info();
+        }
     }
 
 }

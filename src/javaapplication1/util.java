@@ -32,17 +32,5 @@ public class util {
             "rmic  RMI Server.";
         System.out.print(info);
     }
-    public static void main(String[] args) {
-        //testing java features
-        String a="a";
-        String substring[] = a.substring(1).split("\\$");
-        System.out.println(substring[0]);
-        //System.out.println(substring[1]);
-        
-        byte [] buf=new byte[128];
-        buf[0]='a';
-        String t=new String(buf);
-        System.out.println(t.replaceAll("\0", ""));
-        
-    }
+
 }
