@@ -6,6 +6,9 @@
 package javaapplication1;
 import java.io.*;
 import java.net.*;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 /**
  *
@@ -22,7 +25,7 @@ public class Server {
     }
     private static String get(String key){
         String val=st.get(key);
-        if(key==null)return "invalid_key"; 
+        if(val==null)return "invalid_key"; 
         return "get key="+key+" get val="+val;
     }
     private static String del(String key){
@@ -72,7 +75,22 @@ public class Server {
         return response;
     }
     
-    private static void RMI(){/*TODO*/};
+    private static void RMI(){
+        try {
+            String name="service";
+            //Create and export a remote object
+            RMIServerThread obj=new RMIServerThread();
+            RMIinterface stub = (RMIinterface) UnicastRemoteObject.exportObject(obj, 0);
+            //Bind the remote object's stub in the registry
+            Registry registry = LocateRegistry.getRegistry();
+            registry.bind(name, stub);
+            System.out.println("RMIServer ready");
+        } catch (Exception e) {
+            System.err.println("RMIServer exception: " + e.toString());
+            e.printStackTrace();
+        }
+    //TODO
+    }
     
     private static void TCP(int portNumber){
         System.out.println("TCP server on, trying to listen port: "+portNumber);
@@ -113,14 +131,22 @@ public class Server {
     }
     
     public static void main(String[] args) {
-        int portNumber = Integer.parseInt(args[1]);
+        
+        if(args.length<1){
+            util.usage_info();
+            System.exit(1);
+        }
+        
         
         if(args[0].equals("ts"))
-            TCP(portNumber);
+            TCP(Integer.parseInt(args[1]));
         else if(args[0].equals("us"))
-            UDP(portNumber);
-        else 
+            UDP(Integer.parseInt(args[1]));
+        else if(args[0].equals("rmis"))
+            RMI();
+        else
             util.usage_info();
+        
     }
 
 }

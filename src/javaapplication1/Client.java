@@ -7,9 +7,25 @@ package javaapplication1;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+        
 public class Client {
-    private static void RMI(){};
+    private static void RMI(String host, String command){
+        try {
+            //Get host and lookup for service
+            Registry registry = LocateRegistry.getRegistry(host);
+            RMIinterface stub = (RMIinterface) registry.lookup("service");
+            //Use remote service
+            String outLine = stub.protocol(command);
+            System.out.println("response: "+outLine);
+        } catch (Exception e) {
+            System.err.println("Client exception: " + e.toString());
+            e.printStackTrace();
+        }
+    }
     private static void UDP(String host,int hostPort, String command){
         try{
             
@@ -24,7 +40,7 @@ public class Client {
             packet = new DatagramPacket(buf, buf.length);
             socket.receive(packet);
             
-            System.out.println("server response:"+new String(packet.getData()).replaceAll("\0",""));
+            System.out.println("server response: "+new String(packet.getData()).replaceAll("\0",""));
 
         }catch (UnknownHostException e){
             e.printStackTrace();
@@ -62,15 +78,17 @@ public class Client {
         */
         String command="";
         try{
-            switch(args[3]){
+            int offset=0;
+            if(args[0].equals("rmic"))offset=1;
+            switch(args[3-offset]){
                 case "put":command+="1";
-                            command+=args[4]+"$"+args[5];
+                            command+=args[4-offset]+"$"+args[5-offset];
                             break;
                 case "get":command+="2";
-                            command+=args[4];
+                            command+=args[4-offset];
                             break;
                 case "del":command+="3";
-                            command+=args[4];
+                            command+=args[4-offset];
                             break;
                 case "store":command+="4";break;
                 case "exit":command+="5";break;
@@ -80,26 +98,28 @@ public class Client {
         }catch(Exception e){util.usage_info();return null;}
         return command;
     }
+    
     public static void main(String[] args) {
+        if(args.length<1){
+            util.usage_info();
+            System.exit(1);
+        }        
         
-        //new Socket
-        String host=args[1];
-        int hostPort = Integer.parseInt(args[2]);
- 
-        String command=new String(protocol(args));
-
         //transit by diff protocal
-        if(command!=null)
-        {
-            if(args[0].equals("tc"))
-                TCP(host,hostPort,command);
-            else if(args[0].equals("uc"))
-                UDP(host,hostPort,command);
-            else if(args[0].equals("rmic"))
-                RMI();
-            else
-                util.usage_info();
+        String command=protocol(args);
+        switch(args[0]){
+            case "tc":
+                TCP(args[1],Integer.parseInt(args[2]),command);
+                break;
+            case "uc":
+                UDP(args[1],Integer.parseInt(args[2]),command);
+                break;
+            case "rmic":
+                RMI(args[1],command);
+                break;
+            default: util.usage_info();
         }
+
     }
 
 }

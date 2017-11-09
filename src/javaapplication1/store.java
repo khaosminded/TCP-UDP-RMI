@@ -15,7 +15,7 @@ public class store {
     public store(){
         map=new HashMap();
     }
-    //I think we only need write synchronization
+    //I think we only need synchronization on 'write' methods
     //but whatever, performance is not critical here
     public synchronized void  put(String key,String val){
         map.put(key, val); 

@@ -14,7 +14,7 @@ import java.net.DatagramPacket;
 public class util {
     public static void usage_info()
     {
-        String info="Client:\n" +
+        String info="Wrong command, Usage Info:\nClient:\n" +
             "uc/tc <address> <port> put <key> <msg>  UDP/TCP CLIENT: Put an object into store\n" +
             "uc/tc <address> <port> get <key>  UDP/TCP CLIENT: Get an object from store by key\n" +
             "uc/tc <address> <port> del <key>  UDP/TCP CLIENT: Delete an object from store by key\n" +
