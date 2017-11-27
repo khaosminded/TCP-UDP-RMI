@@ -21,15 +21,15 @@ public class store {
         map.put(key, val); 
     }
     
-    public synchronized String get(String key){
+    public  String get(String key){
         return map.get(key);
     }
     
-    public synchronized void del(String key){
+    public  void del(String key){
         map.remove(key);
     }
     
-    public synchronized Iterator<String> list(){
+    public  Iterator<String> list(){
         ArrayList<String> list=new ArrayList();
         Iterator<String> that=map.keySet().iterator();
         while(that.hasNext())
